@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
@@ -11,6 +12,7 @@ using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -27,14 +29,25 @@ namespace Business.Concrete
 		[ValidationAspect(typeof(ProductValidator))]
 		public IResult Add(Product product)
 		{
-			//validation
+			//validation kodu aspect ile [] arasında yaptık
 			//artık bunu yazmamıza gerek kalmadı, [vali..] şeklinde yukarıya ekledik
 			//ValidationTool.Validate(new ProductValidator(), product);
 
+			if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)
+			{
+				if (CheckIfProductNameExist(product.ProductName).Success)
+				{
+					_productDal.Add(product);
+					return new SuccessResult(Messages.ProductAdded);
+				}
+				
+			}
+			return new ErrorResult();
+			
 			//business code
 
-			_productDal.Add(product);
-			return new SuccessResult(Messages.ProductAdded);
+			//Aynı ismde ürün eklenemez.
+			
 		}
 
 		public IDataResult<List<Product>> GetAll()
@@ -68,5 +81,33 @@ namespace Business.Concrete
 		{
 			return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
 		}
+
+		[ValidationAspect(typeof(ProductValidator))]
+		public IResult Update(Product product)
+		{
+			if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)
+			{
+				_productDal.Add(product);
+				return new SuccessResult(Messages.ProductAdded);
+			}
+			return new ErrorResult();
+		}
+
+
+		private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
+		{
+			//Bir katagoride en fazla 10 ürün olabilir.
+
+			if (_productDal.GetAll(p => p.CategoryId == categoryId).Count > 14) return new ErrorResult(Messages.ProductCountOfCategoryError);
+			return new SuccessResult();
+		}
+
+		private IResult CheckIfProductNameExist(string productName)
+		{
+			
+			if (_productDal.GetAll(p => p.ProductName == productName).Any()) return new ErrorResult(Messages.ProductNameAlreadyExist);
+			return new SuccessResult();
+		}
+
 	}
 }
