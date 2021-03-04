@@ -8,5 +8,6 @@ namespace Core.Utilities.Security._JWT
 	{
 		public string Token { get; set; }
 		public DateTime Expiration { get; set; }
+
 	}
 }

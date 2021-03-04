@@ -8,5 +8,6 @@ namespace Core.Utilities.Security._JWT
 	public interface ITokenHelper
 	{
 		AccessToken CreateToken(User user, List<OperationClaim> operationClaims);
+
 	}
 }
