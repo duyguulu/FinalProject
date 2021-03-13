@@ -90,7 +90,7 @@ namespace Business.Concrete
 		{
 			if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)
 			{
-				_productDal.Add(product);
+				_productDal.Update(product);
 				return new SuccessResult(Messages.ProductAdded);
 			}
 			return new ErrorResult();
