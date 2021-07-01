@@ -38,8 +38,6 @@ namespace Business.Concrete
 		[CacheRemoveAspect("IProductService.Get")]
 		public IResult Add(Product product)
 		{
-			//validation kodu aspect ile [] arasında yaptık
-			//artık bunu yazmamıza gerek kalmadı, [vali..] şeklinde yukarıya ekledik
 			//ValidationTool.Validate(new ProductValidator(), product);
 			IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId),
 				CheckIfProductNameExist(product.ProductName),
@@ -57,7 +55,7 @@ namespace Business.Concrete
 
 		}
 
-		[CacheAspect] //key, value
+		//[CacheAspect] //key, value
 		public IDataResult<List<Product>> GetAll()
 		{
 			// iş kodları 

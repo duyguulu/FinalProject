@@ -12,7 +12,6 @@ using System.Text;
 
 namespace Core.Utilities.Security._JWT
 {
-    //ampülden çözerken Castle olanı ekleme dikkat et.
     public class JwtHelper : ITokenHelper
     {
         public IConfiguration Configuration { get; } //appsetting'dekileri okumaya yarar.
